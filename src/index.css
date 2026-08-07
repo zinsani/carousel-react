@@ -1,0 +1,10 @@
+@layer reset, base, tokens, recipes, utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: clip;
+}
