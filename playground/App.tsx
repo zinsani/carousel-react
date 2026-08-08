@@ -1,6 +1,6 @@
-import { css } from "styled-system/css";
-import { Carousel } from "./shared/ui/carousel";
-import { Card } from "./shared/ui/card/Card";
+import { css, cx } from "styled-system/css";
+import { Carousel } from "../src";
+import { Card } from "./card/Card";
 
 const CARDS = [
   {
@@ -69,8 +69,8 @@ function App() {
           ))}
         </Carousel.ItemGroup>
         <Carousel.Control>
-          <Carousel.PrevTrigger />
-          <Carousel.NextTrigger />
+          <Carousel.PrevTrigger className={cx(triggerStyle, prevTriggerStyle)} />
+          <Carousel.NextTrigger className={cx(triggerStyle, nextTriggerStyle)} />
         </Carousel.Control>
       </Carousel.Root>
     </div>
@@ -88,6 +88,47 @@ const headingStyle = css({
   fontWeight: "semibold",
   marginInline: { base: "8", xs: "0" },
   marginBottom: "6",
+});
+
+// The library ships zero visual/positioning opinion — everything below is
+// purely this demo's own styling, applied via `className` on the headless
+// parts. `Carousel.Root` is already `position: relative` (a functional detail
+// the library sets inline), so these can position absolutely against it.
+const triggerStyle = css({
+  position: "absolute",
+  top: "50%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "10",
+  height: "10",
+  borderRadius: "full",
+  border: "none",
+  bg: "white",
+  color: "gray.900",
+  boxShadow: "md",
+  cursor: "pointer",
+  transition: "opacity 0.15s ease, transform 0.15s ease",
+  _disabled: {
+    opacity: 0,
+    pointerEvents: "none",
+  },
+});
+
+const prevTriggerStyle = css({
+  left: 0,
+  transform: "translate(-50%, -50%)",
+  _hover: {
+    transform: "translate(-50%, -50%) scale(1.05)",
+  },
+});
+
+const nextTriggerStyle = css({
+  right: 0,
+  transform: "translate(50%, -50%)",
+  _hover: {
+    transform: "translate(50%, -50%) scale(1.05)",
+  },
 });
 
 export default App;

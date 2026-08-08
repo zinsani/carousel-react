@@ -3,3 +3,7 @@
 styled-system
 styled-system-studio
 /node_modules
+
+## Build output
+/dist
+/playground/dist

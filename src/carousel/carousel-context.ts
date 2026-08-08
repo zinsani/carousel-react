@@ -3,6 +3,9 @@ import { createContext, useContext, type RefObject } from 'react'
 export interface CarouselContextValue {
   cardsToShow: number
   gap: number
+  /** Viewport width (px) at/above which the carousel switches to desktop behavior. */
+  breakpoint: number
+  isDesktop: boolean
   viewportRef: RefObject<HTMLDivElement | null>
   canScrollPrev: boolean
   canScrollNext: boolean

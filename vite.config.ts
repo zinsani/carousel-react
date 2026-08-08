@@ -2,8 +2,9 @@ import path from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// Playground dev server / demo build — not the library build (see vite.lib.config.ts).
 export default defineConfig({
+  root: 'playground',
   plugins: [react()],
   resolve: {
     alias: {

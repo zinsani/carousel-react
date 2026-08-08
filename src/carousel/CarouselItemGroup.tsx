@@ -1,19 +1,20 @@
-import { useEffect, type ReactNode } from 'react'
-import { css, cx } from 'styled-system/css'
+import { useEffect, type CSSProperties, type ReactNode } from 'react'
 import { useCarouselContext } from './carousel-context'
 
 export interface CarouselItemGroupProps {
   children: ReactNode
   className?: string
+  style?: CSSProperties
   'aria-label'?: string
 }
 
 export function CarouselItemGroup({
   children,
   className,
+  style,
   'aria-label': ariaLabel = 'Carousel',
 }: CarouselItemGroupProps) {
-  const { viewportRef, updateScrollState } = useCarouselContext('ItemGroup')
+  const { viewportRef, updateScrollState, isDesktop } = useCarouselContext('ItemGroup')
 
   useEffect(() => {
     const node = viewportRef.current
@@ -38,10 +39,26 @@ export function CarouselItemGroup({
     }
   }, [viewportRef, updateScrollState])
 
+  const itemGroupStyle: CSSProperties = {
+    display: 'flex',
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    scrollSnapType: 'x mandatory',
+    WebkitOverflowScrolling: 'touch',
+    scrollbarWidth: 'none',
+    gap: 'var(--carousel-gap)',
+    // Peek layout on mobile: symmetric inset centers the first card and
+    // reveals slivers of neighboring cards in the padding area.
+    paddingInline: isDesktop ? 0 : 'var(--carousel-mobile-peek)',
+    scrollPaddingInline: isDesktop ? 0 : 'var(--carousel-mobile-peek)',
+    ...style,
+  }
+
   return (
     <div
       ref={viewportRef}
-      className={cx(itemGroupStyle, className)}
+      className={className}
+      style={itemGroupStyle}
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
@@ -51,24 +68,3 @@ export function CarouselItemGroup({
     </div>
   )
 }
-
-const itemGroupStyle = css({
-  display: 'flex',
-  overflowX: 'auto',
-  overflowY: 'hidden',
-  scrollSnapType: 'x mandatory',
-  WebkitOverflowScrolling: 'touch',
-  scrollbarWidth: 'none',
-  gap: 'var(--carousel-gap)',
-  // Peek layout: symmetric 32px inset centers the first card and reveals
-  // slivers of neighboring cards in the padding area.
-  paddingInline: '32px',
-  scrollPaddingInline: '32px',
-  '&::-webkit-scrollbar': {
-    display: 'none',
-  },
-  xs: {
-    paddingInline: 0,
-    scrollPaddingInline: 0,
-  },
-})
