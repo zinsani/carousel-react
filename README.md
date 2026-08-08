@@ -5,7 +5,7 @@ A headless, accessible React carousel. No drag/gesture library, no CSS to import
 ## Install
 
 ```bash
-npm install carousel-react
+npm install @zinsani/carousel-react
 ```
 
 `react` and `react-dom` (`^18 || ^19`) are peer dependencies — nothing else. There's no companion stylesheet to import.
@@ -15,7 +15,7 @@ npm install carousel-react
 The carousel is a compound component — `Carousel.Root` provides shared state via context, and the rest are composable, unstyled parts. Every part accepts `className`/`style`, so bring your own CSS:
 
 ```tsx
-import { Carousel } from 'carousel-react'
+import { Carousel } from '@zinsani/carousel-react'
 
 function Example() {
   return (

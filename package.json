@@ -1,9 +1,12 @@
 {
-  "name": "carousel-react",
+  "name": "@zinsani/carousel-react",
   "version": "0.1.0",
   "description": "A headless, accessible React carousel built with native CSS scroll-snap — zero styling opinion, zero runtime dependencies beyond React.",
   "type": "module",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "zinsani <zinsani@gmail.com>",
   "repository": {
     "type": "git",
