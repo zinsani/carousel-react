@@ -4,6 +4,8 @@ import { CarouselItem } from './CarouselItem'
 import { CarouselControl } from './CarouselControl'
 import { CarouselPrevTrigger } from './CarouselPrevTrigger'
 import { CarouselNextTrigger } from './CarouselNextTrigger'
+import { CarouselIndicatorGroup } from './CarouselIndicatorGroup'
+import { CarouselIndicator } from './CarouselIndicator'
 
 export const Carousel = {
   Root: CarouselRoot,
@@ -12,6 +14,8 @@ export const Carousel = {
   Control: CarouselControl,
   PrevTrigger: CarouselPrevTrigger,
   NextTrigger: CarouselNextTrigger,
+  IndicatorGroup: CarouselIndicatorGroup,
+  Indicator: CarouselIndicator,
 }
 
 export type { CarouselRootProps } from './CarouselRoot'
@@ -20,3 +24,8 @@ export type { CarouselItemProps } from './CarouselItem'
 export type { CarouselControlProps } from './CarouselControl'
 export type { CarouselPrevTriggerProps } from './CarouselPrevTrigger'
 export type { CarouselNextTriggerProps } from './CarouselNextTrigger'
+export type {
+  CarouselIndicatorGroupProps,
+  CarouselIndicatorGroupState,
+} from './CarouselIndicatorGroup'
+export type { CarouselIndicatorProps } from './CarouselIndicator'

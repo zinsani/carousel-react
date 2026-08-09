@@ -6,4 +6,7 @@ export type {
   CarouselControlProps,
   CarouselPrevTriggerProps,
   CarouselNextTriggerProps,
+  CarouselIndicatorGroupProps,
+  CarouselIndicatorGroupState,
+  CarouselIndicatorProps,
 } from './carousel'

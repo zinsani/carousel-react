@@ -72,6 +72,10 @@ function App() {
           <Carousel.PrevTrigger className={cx(triggerStyle, prevTriggerStyle)} />
           <Carousel.NextTrigger className={cx(triggerStyle, nextTriggerStyle)} />
         </Carousel.Control>
+        <Carousel.IndicatorGroup
+          className={indicatorGroupStyle}
+          indicatorClassName={indicatorStyle}
+        />
       </Carousel.Root>
     </div>
   );
@@ -128,6 +132,44 @@ const nextTriggerStyle = css({
   transform: "translate(50%, -50%)",
   _hover: {
     transform: "translate(50%, -50%) scale(1.05)",
+  },
+});
+
+const indicatorGroupStyle = css({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "2",
+  marginTop: "6",
+});
+
+// Inactive: small gray circle. Active: solid capsule, via the `data-active`
+// attribute the headless Indicator sets on the current page. Colors follow the
+// OS theme, matching the `color-scheme: light dark` declared in index.css.
+const indicatorStyle = css({
+  width: "2",
+  height: "2",
+  padding: 0,
+  border: "none",
+  borderRadius: "full",
+  bg: "gray.300",
+  cursor: "pointer",
+  transition: "width 0.2s ease, background-color 0.2s ease",
+  _hover: {
+    bg: "gray.400",
+  },
+  "&[data-active]": {
+    width: "6",
+    bg: "black",
+  },
+  _osDark: {
+    bg: "gray.600",
+    _hover: {
+      bg: "gray.500",
+    },
+    "&[data-active]": {
+      bg: "white",
+    },
   },
 });
 

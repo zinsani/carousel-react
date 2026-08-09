@@ -29,6 +29,7 @@ function Example() {
         <Carousel.PrevTrigger />
         <Carousel.NextTrigger />
       </Carousel.Control>
+      <Carousel.IndicatorGroup />
     </Carousel.Root>
   )
 }
@@ -58,6 +59,23 @@ The library ships zero visual or positioning opinion — no colors, no shadows, 
 | `Carousel.Item` | `className` · `style` |
 | `Carousel.Control` | Wrapper for the arrow buttons; renders `null` below `breakpoint`. `className` · `style` |
 | `Carousel.PrevTrigger` / `Carousel.NextTrigger` | Any native `<button>` prop (`className`, `style`, `aria-label`, `onClick` is already wired, etc.) |
+| `Carousel.IndicatorGroup` | Page dots. Renders one `Carousel.Indicator` per page automatically — pass `indicatorClassName` to style them. `className` · `style` · `aria-label`. For full control, pass a render function as `children`: it receives `{ pages, pageCount, activePage }`. |
+| `Carousel.Indicator` | A single dot. `index` (required) · any native `<button>` prop. Clicking scrolls to that page. |
+
+### Page indicators
+
+Page count adapts to the layout: on desktop it's `ceil(items / cardsToShow)` (so 7 cards at 2-per-view gives 4 dots); on mobile it's one dot per card. The active dot tracks whatever moved the carousel — arrow clicks, indicator clicks, or a plain swipe.
+
+The active indicator gets `data-active` and `aria-current`, which is all you need to style it:
+
+```tsx
+<Carousel.IndicatorGroup className={dotRow} indicatorClassName={dot} />
+```
+
+```css
+.dot            { width: 8px; height: 8px; border-radius: 9999px; background: #d1d5db; }
+.dot[data-active] { width: 24px; background: black; }   /* capsule */
+```
 
 ## Local development
 

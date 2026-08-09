@@ -9,8 +9,13 @@ export interface CarouselContextValue {
   viewportRef: RefObject<HTMLDivElement | null>
   canScrollPrev: boolean
   canScrollNext: boolean
+  /** Number of snap pages: `ceil(items / cardsToShow)` on desktop, one per item on mobile. */
+  pageCount: number
+  /** Zero-based index of the page currently scrolled into view. */
+  activePage: number
   scrollPrev: () => void
   scrollNext: () => void
+  scrollToPage: (index: number) => void
   updateScrollState: () => void
 }
 

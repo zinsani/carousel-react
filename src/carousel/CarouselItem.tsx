@@ -24,7 +24,13 @@ export function CarouselItem({ children, className, style }: CarouselItemProps) 
   }
 
   return (
-    <div className={className} style={itemStyle} role="group" aria-roledescription="slide">
+    <div
+      className={className}
+      style={itemStyle}
+      role="group"
+      aria-roledescription="slide"
+      data-carousel-item=""
+    >
       {children}
     </div>
   )

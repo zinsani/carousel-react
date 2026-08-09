@@ -30,12 +30,17 @@ export function CarouselItemGroup({
 
     const resizeObserver = new ResizeObserver(() => updateScrollState())
     resizeObserver.observe(node)
+    // Adding/removing slides changes the page count without resizing the
+    // viewport itself, so ResizeObserver alone would miss it.
+    const mutationObserver = new MutationObserver(() => updateScrollState())
+    mutationObserver.observe(node, { childList: true })
     node.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
       cancelAnimationFrame(frame)
       node.removeEventListener('scroll', handleScroll)
       resizeObserver.disconnect()
+      mutationObserver.disconnect()
     }
   }, [viewportRef, updateScrollState])
 

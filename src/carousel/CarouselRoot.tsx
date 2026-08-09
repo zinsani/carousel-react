@@ -35,7 +35,40 @@ export function CarouselRoot({
   const viewportRef = useRef<HTMLDivElement>(null)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
+  const [pageCount, setPageCount] = useState(1)
+  const [activePage, setActivePage] = useState(0)
   const isDesktop = useMediaQuery(`(min-width: ${breakpoint}px)`)
+
+  /**
+   * The `scrollLeft` each page snaps to. Pages group `cardsToShow` items on
+   * desktop and one item per page on mobile, mirroring how far an arrow click
+   * or a swipe travels. Offsets are clamped to the max scroll, so an uneven
+   * final page resolves to the same position the browser actually stops at.
+   */
+  const getPageOffsets = useCallback(() => {
+    const viewport = viewportRef.current
+    if (!viewport) return []
+    const items = Array.from(
+      viewport.querySelectorAll<HTMLElement>(':scope > [data-carousel-item]'),
+    )
+    if (items.length === 0) return []
+
+    const itemsPerPage = Math.max(1, isDesktop ? cardsToShow : 1)
+    const maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth)
+    const paddingLeft = parseFloat(getComputedStyle(viewport).paddingLeft) || 0
+    const base = items[0].offsetLeft
+
+    const offsets: number[] = []
+    for (let i = 0; i < items.length; i += itemsPerPage) {
+      const distance = items[i].offsetLeft - base
+      // Desktop snaps items to the start edge; mobile centers them.
+      const ideal = isDesktop
+        ? distance
+        : paddingLeft + distance + items[i].offsetWidth / 2 - viewport.clientWidth / 2
+      offsets.push(Math.max(0, Math.min(ideal, maxScrollLeft)))
+    }
+    return offsets
+  }, [cardsToShow, isDesktop])
 
   const updateScrollState = useCallback(() => {
     const viewport = viewportRef.current
@@ -43,7 +76,23 @@ export function CarouselRoot({
     const maxScrollLeft = viewport.scrollWidth - viewport.clientWidth
     setCanScrollPrev(viewport.scrollLeft > 1)
     setCanScrollNext(viewport.scrollLeft < maxScrollLeft - 1)
-  }, [])
+
+    const offsets = getPageOffsets()
+    setPageCount(Math.max(1, offsets.length))
+
+    // Nearest snap offset wins. `<=` lets a later page win ties, so a clamped
+    // final page beats the previous one when they resolve to the same offset.
+    let nearest = 0
+    let nearestDistance = Infinity
+    offsets.forEach((offset, index) => {
+      const distance = Math.abs(offset - viewport.scrollLeft)
+      if (distance <= nearestDistance) {
+        nearestDistance = distance
+        nearest = index
+      }
+    })
+    setActivePage(nearest)
+  }, [getPageOffsets])
 
   const scrollPrev = useCallback(() => {
     const viewport = viewportRef.current
@@ -57,6 +106,18 @@ export function CarouselRoot({
     viewport.scrollBy({ left: viewport.clientWidth, behavior: 'smooth' })
   }, [])
 
+  const scrollToPage = useCallback(
+    (index: number) => {
+      const viewport = viewportRef.current
+      if (!viewport) return
+      const offsets = getPageOffsets()
+      if (offsets.length === 0) return
+      const clamped = Math.max(0, Math.min(index, offsets.length - 1))
+      viewport.scrollTo({ left: offsets[clamped], behavior: 'smooth' })
+    },
+    [getPageOffsets],
+  )
+
   const contextValue = useMemo(
     () => ({
       cardsToShow,
@@ -66,11 +127,27 @@ export function CarouselRoot({
       viewportRef,
       canScrollPrev,
       canScrollNext,
+      pageCount,
+      activePage,
       scrollPrev,
       scrollNext,
+      scrollToPage,
       updateScrollState,
     }),
-    [cardsToShow, gap, breakpoint, isDesktop, canScrollPrev, canScrollNext, scrollPrev, scrollNext, updateScrollState],
+    [
+      cardsToShow,
+      gap,
+      breakpoint,
+      isDesktop,
+      canScrollPrev,
+      canScrollNext,
+      pageCount,
+      activePage,
+      scrollPrev,
+      scrollNext,
+      scrollToPage,
+      updateScrollState,
+    ],
   )
 
   const rootStyle: CarouselCSSProperties = {
