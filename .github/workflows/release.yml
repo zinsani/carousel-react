@@ -20,15 +20,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Follows .nvmrc so CI and local development stay on the same Node.
+      # Node 24 bundles npm 11.x, which has the OIDC support (>= 11.5.1)
+      # that trusted publishing needs.
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: '.nvmrc'
           registry-url: https://registry.npmjs.org
-
-      # Trusted publishing (OIDC) needs npm >= 11.5.1, newer than the npm
-      # bundled with Node 22.
-      - name: Use an npm with OIDC support
-        run: npm install -g npm@latest
 
       - run: npm ci
 
