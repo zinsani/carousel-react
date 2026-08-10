@@ -10,8 +10,6 @@ export interface CarouselContextValue {
   mobileCardsToShow: number
   /** True only for the single-card mobile layout, the one that centres its page. */
   centred: boolean
-  /** Below `breakpoint`, clicking a non-active item scrolls it into the centre. */
-  centerItemOnClick: boolean
   viewportRef: RefObject<HTMLDivElement | null>
   canScrollPrev: boolean
   canScrollNext: boolean
@@ -22,6 +20,8 @@ export interface CarouselContextValue {
   scrollPrev: () => void
   scrollNext: () => void
   scrollToPage: (index: number) => void
+  /** Scroll the page containing the given item index into view. */
+  scrollToItem: (index: number) => void
   updateScrollState: () => void
 }
 

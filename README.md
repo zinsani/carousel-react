@@ -38,7 +38,7 @@ function Example() {
 ## Behavior
 
 - **Desktop** (≥ `breakpoint`, default 576px): shows `cardsToShow` cards edge-to-edge, auto-sized to fill the container. Arrow buttons slide by exactly one container-width (i.e. `cardsToShow` cards) per click, and native scroll clamping means the last click on an uneven card count slides only as far as needed to land the final card flush against the edge — no special-casing required.
-- **Mobile** (below `breakpoint`): shows `mobileCardsToShow` cards per page (default 1) with `mobilePeek` of room for the next card to peek through, and `mobileInset` kept as a gutter so the first and last cards rest inset rather than jammed against the container's edges. Cards still scroll through that gutter — it offsets where they settle, it doesn't clip them. Swipe left/right to slide — native touch scrolling, no gesture library. Arrow buttons render nothing at all (not just visually hidden) below the breakpoint. Set `centerItemOnClick` to also scroll a tapped, non-active card into view.
+- **Mobile** (below `breakpoint`): shows `mobileCardsToShow` cards per page (default 1) with `mobilePeek` of room for the next card to peek through, and `mobileInset` kept as a gutter so the first and last cards rest inset rather than jammed against the container's edges. Cards still scroll through that gutter — it offsets where they settle, it doesn't clip them. Swipe left/right to slide — native touch scrolling, no gesture library. Arrow buttons render nothing at all (not just visually hidden) below the breakpoint.
 
   With the default `mobileCardsToShow={1}` the active card is **centred**, so a sliver of both neighbours shows and the first/last cards settle against the gutter. Any higher value aligns pages to the **start** edge instead — a page of several cards has no single card to centre — so only the next card peeks, on the trailing side.
 
@@ -56,9 +56,9 @@ The library ships zero visual or positioning opinion — no colors, no shadows, 
 
 | Component | Props |
 |---|---|
-| `Carousel.Root` | `cardsToShow` (number, required) · `mobileCardsToShow` (number, default `1`) · `gap` (px, default `16`) · `breakpoint` (px, default `576`) · `mobilePeek` (px, default `32`) · `mobileInset` (px, default `16` — mobile only) · `centerItemOnClick` (boolean, default `false` — mobile only) · `className` · `style` |
+| `Carousel.Root` | `cardsToShow` (number, required) · `mobileCardsToShow` (number, default `1`) · `gap` (px, default `16`) · `breakpoint` (px, default `576`) · `mobilePeek` (px, default `32`) · `mobileInset` (px, default `16` — mobile only) · `className` · `style` |
 | `Carousel.ItemGroup` | `aria-label` · `className` · `style` |
-| `Carousel.Item` | `className` · `style` |
+| `Carousel.Item` | Any native `<div>` prop (`className`, `style`, `onClick`, …) |
 | `Carousel.Control` | Wrapper for the arrow buttons; renders `null` below `breakpoint`. `className` · `style` |
 | `Carousel.PrevTrigger` / `Carousel.NextTrigger` | Any native `<button>` prop (`className`, `style`, `aria-label`, `onClick` is already wired, etc.) |
 | `Carousel.IndicatorGroup` | Page dots. Renders one `Carousel.Indicator` per page automatically — pass `indicatorClassName` to style them. `className` · `style` · `aria-label`. For full control, pass a render function as `children`: it receives `{ pages, pageCount, activePage }`. |
@@ -66,7 +66,7 @@ The library ships zero visual or positioning opinion — no colors, no shadows, 
 
 ### Page indicators
 
-Page count adapts to the layout: on desktop it's `ceil(items / cardsToShow)` (so 7 cards at 2-per-view gives 4 dots); on mobile it's one dot per card. The active dot tracks whatever moved the carousel — arrow clicks, indicator clicks, or a plain swipe.
+Page count adapts to the layout — `ceil(items / cardsToShow)`, using whichever count applies at the current width (so 7 cards at 2-per-view gives 4 dots, and 7 dots at the default 1-per-view on mobile). The active dot tracks whatever moved the carousel — arrow clicks, indicator clicks, or a plain swipe.
 
 The active indicator gets `data-active` and `aria-current`, which is all you need to style it:
 
@@ -78,6 +78,42 @@ The active indicator gets `data-active` and `aria-current`, which is all you nee
 .dot            { width: 8px; height: 8px; border-radius: 9999px; background: #d1d5db; }
 .dot[data-active] { width: 24px; background: black; }   /* capsule */
 ```
+
+### `useCarousel()`
+
+Read carousel state and drive it imperatively from anywhere inside `Carousel.Root`. Use it for your own controls, or to react to clicks on card content — the library deliberately binds no handlers of its own there, so it can never fight with something interactive inside a card:
+
+```tsx
+import { Carousel, useCarousel } from '@zinsani/carousel-react'
+
+function Slides() {
+  const { isDesktop, activePage, scrollToItem } = useCarousel()
+
+  return items.map((item, index) => (
+    <Carousel.Item
+      key={item.id}
+      onClick={(event) => {
+        // your call: skip links/buttons, only on mobile, only when not active
+        if ((event.target as HTMLElement).closest('a, button')) return
+        if (!isDesktop && index !== activePage) scrollToItem(index)
+      }}
+    >
+      {/* … */}
+    </Carousel.Item>
+  ))
+}
+```
+
+It must be called inside `Carousel.Root` (it throws otherwise), so put it in a child component like `Slides` above rather than alongside `<Carousel.Root>` itself.
+
+| Returns | |
+|---|---|
+| `activePage` · `pageCount` | current page and total, for the width in play |
+| `isDesktop` | `true` at/above `breakpoint` |
+| `canScrollPrev` · `canScrollNext` | whether there's room to move |
+| `scrollPrev()` · `scrollNext()` | move one page |
+| `scrollToPage(index)` | jump to a page |
+| `scrollToItem(index)` | jump to the page containing that item — no `index / cardsToShow` maths on your side |
 
 ## Local development
 

@@ -1,4 +1,4 @@
-export { Carousel } from './carousel'
+export { Carousel, useCarousel } from './carousel'
 export type {
   CarouselRootProps,
   CarouselItemGroupProps,
@@ -9,4 +9,5 @@ export type {
   CarouselIndicatorGroupProps,
   CarouselIndicatorGroupState,
   CarouselIndicatorProps,
+  UseCarouselReturn,
 } from './carousel'

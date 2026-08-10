@@ -7,6 +7,9 @@ import { CarouselNextTrigger } from './CarouselNextTrigger'
 import { CarouselIndicatorGroup } from './CarouselIndicatorGroup'
 import { CarouselIndicator } from './CarouselIndicator'
 
+export { useCarousel } from './use-carousel'
+export type { UseCarouselReturn } from './use-carousel'
+
 export const Carousel = {
   Root: CarouselRoot,
   ItemGroup: CarouselItemGroup,

@@ -20,9 +20,6 @@ export interface CarouselRootProps {
    * and last cards rest inset rather than against the edge. Cards still scroll
    * through this area — it insets where they come to rest, it doesn't clip. */
   mobileInset?: number
-  /** Below `breakpoint`, clicking a non-active card scrolls it into the centre.
-   * Off by default. */
-  centerItemOnClick?: boolean
   children: ReactNode
   className?: string
   style?: CSSProperties
@@ -43,7 +40,6 @@ export function CarouselRoot({
   breakpoint = 576,
   mobilePeek = 32,
   mobileInset = 16,
-  centerItemOnClick = false,
   children,
   className,
   style,
@@ -137,6 +133,14 @@ export function CarouselRoot({
     [getPageOffsets],
   )
 
+  const scrollToItem = useCallback(
+    (index: number) => {
+      const itemsPerPage = Math.max(1, isDesktop ? cardsToShow : mobileCardsToShow)
+      scrollToPage(Math.floor(index / itemsPerPage))
+    },
+    [cardsToShow, mobileCardsToShow, isDesktop, scrollToPage],
+  )
+
   const contextValue = useMemo(
     () => ({
       cardsToShow,
@@ -145,7 +149,6 @@ export function CarouselRoot({
       isDesktop,
       centred,
       mobileCardsToShow,
-      centerItemOnClick,
       viewportRef,
       canScrollPrev,
       canScrollNext,
@@ -154,6 +157,7 @@ export function CarouselRoot({
       scrollPrev,
       scrollNext,
       scrollToPage,
+      scrollToItem,
       updateScrollState,
     }),
     [
@@ -163,7 +167,6 @@ export function CarouselRoot({
       isDesktop,
       centred,
       mobileCardsToShow,
-      centerItemOnClick,
       canScrollPrev,
       canScrollNext,
       pageCount,
@@ -171,6 +174,7 @@ export function CarouselRoot({
       scrollPrev,
       scrollNext,
       scrollToPage,
+      scrollToItem,
       updateScrollState,
     ],
   )

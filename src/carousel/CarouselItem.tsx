@@ -1,37 +1,12 @@
-import { useRef, type CSSProperties, type MouseEvent, type ReactNode } from 'react'
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react'
 import { useCarouselContext } from './carousel-context'
 
-export interface CarouselItemProps {
+export interface CarouselItemProps extends Omit<ComponentPropsWithoutRef<'div'>, 'children'> {
   children: ReactNode
-  className?: string
-  style?: CSSProperties
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void
 }
 
-export function CarouselItem({ children, className, style, onClick }: CarouselItemProps) {
-  const { isDesktop, centred, mobileCardsToShow, centerItemOnClick, activePage, scrollToPage } =
-    useCarouselContext('Item')
-  const itemRef = useRef<HTMLDivElement>(null)
-
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-    onClick?.(event)
-    if (event.defaultPrevented) return
-    // Opt-in, and mobile-only.
-    if (!centerItemOnClick || isDesktop) return
-
-    const element = itemRef.current
-    const group = element?.parentElement
-    if (!element || !group) return
-
-    const items = Array.from(group.querySelectorAll<HTMLElement>(':scope > [data-carousel-item]'))
-    const index = items.indexOf(element)
-    if (index < 0) return
-
-    // Cards are grouped into pages, so the item's position among its siblings
-    // only equals its page index when there is one card per page.
-    const page = Math.floor(index / Math.max(1, mobileCardsToShow))
-    if (page !== activePage) scrollToPage(page)
-  }
+export function CarouselItem({ children, style, ...props }: CarouselItemProps) {
+  const { isDesktop, centred } = useCarouselContext('Item')
 
   // Desktop: evenly divide the viewport across `cardsToShow` cards, minus the
   // gaps between them, so cards fill the container edge-to-edge.
@@ -57,13 +32,11 @@ export function CarouselItem({ children, className, style, onClick }: CarouselIt
 
   return (
     <div
-      ref={itemRef}
-      className={className}
       style={itemStyle}
-      onClick={handleClick}
       role="group"
       aria-roledescription="slide"
       data-carousel-item=""
+      {...props}
     >
       {children}
     </div>

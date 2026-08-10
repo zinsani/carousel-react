@@ -1,5 +1,5 @@
 import { css, cx } from "styled-system/css";
-import { Carousel } from "../src";
+import { Carousel, useCarousel } from "../src";
 import { Card } from "./card/Card";
 
 const CARDS = [
@@ -50,23 +50,45 @@ const CARDS = [
   },
 ];
 
+// Bringing a card into view on tap is the consumer's call, not the library's —
+// so it can be scoped to mobile, skipped for the active card, and stay out of
+// the way of anything interactive inside the card. Needs to live inside
+// Carousel.Root to read from useCarousel().
+function Slides() {
+  const { isDesktop, activePage, scrollToItem } = useCarousel();
+
+  return (
+    <>
+      {CARDS.map((card, index) => (
+        <Carousel.Item
+          key={card.id}
+          style={{ cursor: !isDesktop && index !== activePage ? "pointer" : undefined }}
+          onClick={(event) => {
+            // Leave clicks on links/buttons inside the card alone.
+            if ((event.target as HTMLElement).closest("a, button")) return;
+            if (!isDesktop && index !== activePage) scrollToItem(index);
+          }}
+        >
+          <Card
+            title={card.title}
+            description={card.description}
+            imageSrc={`https://loremflickr.com/300/300/cat?lock=${card.id}`}
+            imageAlt={card.title}
+            accentColor={card.color}
+          />
+        </Carousel.Item>
+      ))}
+    </>
+  );
+}
+
 function App() {
   return (
     <div className={pageStyle}>
       <h1 className={headingStyle}>Carousel</h1>
-      <Carousel.Root cardsToShow={2} gap={16} centerItemOnClick>
+      <Carousel.Root cardsToShow={2} gap={16}>
         <Carousel.ItemGroup aria-label="Featured cards">
-          {CARDS.map((card) => (
-            <Carousel.Item key={card.id}>
-              <Card
-                title={card.title}
-                description={card.description}
-                imageSrc={`https://loremflickr.com/300/300/cat?lock=${card.id}`}
-                imageAlt={card.title}
-                accentColor={card.color}
-              />
-            </Carousel.Item>
-          ))}
+          <Slides />
         </Carousel.ItemGroup>
         <Carousel.Control>
           <Carousel.PrevTrigger className={cx(triggerStyle, prevTriggerStyle)} />
