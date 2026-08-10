@@ -10,9 +10,12 @@ export interface CarouselRootProps {
   /** Viewport width (px) at/above which the carousel switches to desktop behavior. */
   breakpoint?: number
   /** Below `breakpoint`, how much room is left free on each side of a card so
-   * neighbouring cards peek through. The first and last cards still settle
-   * flush against the container's edges. */
+   * neighbouring cards peek through. */
   mobilePeek?: number
+  /** Below `breakpoint`, the gutter kept at the container's edges, so the first
+   * and last cards rest inset rather than against the edge. Cards still scroll
+   * through this area — it insets where they come to rest, it doesn't clip. */
+  mobileInset?: number
   /** Below `breakpoint`, clicking a non-active card scrolls it into the centre.
    * Off by default. */
   centerItemOnClick?: boolean
@@ -25,6 +28,7 @@ type CarouselCSSProperties = CSSProperties & {
   '--carousel-cards-to-show'?: number
   '--carousel-gap'?: string
   '--carousel-mobile-peek'?: string
+  '--carousel-mobile-inset'?: string
 }
 
 export function CarouselRoot({
@@ -32,6 +36,7 @@ export function CarouselRoot({
   gap = 16,
   breakpoint = 576,
   mobilePeek = 32,
+  mobileInset = 16,
   centerItemOnClick = false,
   children,
   className,
@@ -163,6 +168,7 @@ export function CarouselRoot({
     '--carousel-cards-to-show': cardsToShow,
     '--carousel-gap': `${gap}px`,
     '--carousel-mobile-peek': `${mobilePeek}px`,
+    '--carousel-mobile-inset': `${mobileInset}px`,
     ...style,
   }
 

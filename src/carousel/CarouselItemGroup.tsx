@@ -14,7 +14,7 @@ export function CarouselItemGroup({
   style,
   'aria-label': ariaLabel = 'Carousel',
 }: CarouselItemGroupProps) {
-  const { viewportRef, updateScrollState } = useCarouselContext('ItemGroup')
+  const { viewportRef, updateScrollState, isDesktop } = useCarouselContext('ItemGroup')
 
   useEffect(() => {
     const node = viewportRef.current
@@ -52,6 +52,10 @@ export function CarouselItemGroup({
     WebkitOverflowScrolling: 'touch',
     scrollbarWidth: 'none',
     gap: 'var(--carousel-gap)',
+    // Mobile gutter: cards come to rest inset from the container's edges, but
+    // still scroll through this area — padding on a scroll container offsets
+    // the content, it doesn't clip it.
+    paddingInline: isDesktop ? 0 : 'var(--carousel-mobile-inset)',
     ...style,
   }
 

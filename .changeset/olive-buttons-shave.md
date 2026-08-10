@@ -2,8 +2,11 @@
 '@zinsani/carousel-react': minor
 ---
 
-Change mobile alignment so the first card sits flush against the container's left edge and the last flush against its right edge, instead of the first card being centred. Cards in between stay centred with a neighbour peeking on each side.
+Rework mobile alignment. Previously the first card was centred, with equal slivers of its neighbours showing on both sides. Now cards come to rest against the container's edges — the first against the left, the last against the right — with only the cards in between centred, so it reads as a list you scroll through rather than a centred spotlight.
 
-The item group no longer sets its own inline padding; each card instead reserves `mobilePeek` on both sides, and the browser's clamping of the scroll range does the rest. Card sizing is unchanged.
+Two new `Carousel.Root` props, both mobile-only:
 
-Also adds `centerItemOnClick` on `Carousel.Root` (default `false`, mobile only): when enabled, tapping a partially visible card scrolls it into the centre. Tapping the already-active card does nothing, and the behaviour is inert above `breakpoint`.
+- `mobileInset` (px, default `16`) — the gutter kept at the container's edges, so the first and last cards rest inset rather than jammed against the edge. Cards still scroll through that area; it offsets where they settle, it doesn't clip them.
+- `centerItemOnClick` (boolean, default `false`) — tapping a partially visible card scrolls it into the centre. Tapping the already-active card does nothing, and the behaviour is inert above `breakpoint`.
+
+`mobilePeek` now means only "how much of the neighbouring card shows", separate from the edge gutter; the item group no longer derives its padding from it.
