@@ -6,6 +6,8 @@ export interface CarouselContextValue {
   /** Viewport width (px) at/above which the carousel switches to desktop behavior. */
   breakpoint: number
   isDesktop: boolean
+  /** Below `breakpoint`, clicking a non-active item scrolls it into the centre. */
+  centerItemOnClick: boolean
   viewportRef: RefObject<HTMLDivElement | null>
   canScrollPrev: boolean
   canScrollNext: boolean

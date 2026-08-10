@@ -38,7 +38,7 @@ function Example() {
 ## Behavior
 
 - **Desktop** (≥ `breakpoint`, default 576px): shows `cardsToShow` cards edge-to-edge, auto-sized to fill the container. Arrow buttons slide by exactly one container-width (i.e. `cardsToShow` cards) per click, and native scroll clamping means the last click on an uneven card count slides only as far as needed to land the final card flush against the edge — no special-casing required.
-- **Mobile** (below `breakpoint`): shows 1 card, centered, with symmetric padding (`mobilePeek`) on the container so neighboring cards peek in from both edges. Swipe left/right to slide — native touch scrolling, no gesture library. Arrow buttons render nothing at all (not just visually hidden) below the breakpoint.
+- **Mobile** (below `breakpoint`): shows 1 card at a time with `mobilePeek` of room on each side, so neighbouring cards peek through. The first card sits flush against the container's left edge and the last flush against its right edge; every card in between is centred. Swipe left/right to slide — native touch scrolling, no gesture library. Arrow buttons render nothing at all (not just visually hidden) below the breakpoint. Set `centerItemOnClick` to also scroll a tapped, non-active card into the centre.
 
 ## Styling
 
@@ -54,7 +54,7 @@ The library ships zero visual or positioning opinion — no colors, no shadows, 
 
 | Component | Props |
 |---|---|
-| `Carousel.Root` | `cardsToShow` (number, required) · `gap` (px, default `16`) · `breakpoint` (px, default `576`) · `mobilePeek` (px, default `32`) · `className` · `style` |
+| `Carousel.Root` | `cardsToShow` (number, required) · `gap` (px, default `16`) · `breakpoint` (px, default `576`) · `mobilePeek` (px, default `32`) · `centerItemOnClick` (boolean, default `false` — mobile only) · `className` · `style` |
 | `Carousel.ItemGroup` | `aria-label` · `className` · `style` |
 | `Carousel.Item` | `className` · `style` |
 | `Carousel.Control` | Wrapper for the arrow buttons; renders `null` below `breakpoint`. `className` · `style` |

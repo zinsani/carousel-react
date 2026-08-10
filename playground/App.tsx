@@ -54,7 +54,7 @@ function App() {
   return (
     <div className={pageStyle}>
       <h1 className={headingStyle}>Carousel</h1>
-      <Carousel.Root cardsToShow={2} gap={16}>
+      <Carousel.Root cardsToShow={2} gap={16} centerItemOnClick>
         <Carousel.ItemGroup aria-label="Featured cards">
           {CARDS.map((card) => (
             <Carousel.Item key={card.id}>

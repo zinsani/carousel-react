@@ -14,7 +14,7 @@ export function CarouselItemGroup({
   style,
   'aria-label': ariaLabel = 'Carousel',
 }: CarouselItemGroupProps) {
-  const { viewportRef, updateScrollState, isDesktop } = useCarouselContext('ItemGroup')
+  const { viewportRef, updateScrollState } = useCarouselContext('ItemGroup')
 
   useEffect(() => {
     const node = viewportRef.current
@@ -52,10 +52,6 @@ export function CarouselItemGroup({
     WebkitOverflowScrolling: 'touch',
     scrollbarWidth: 'none',
     gap: 'var(--carousel-gap)',
-    // Peek layout on mobile: symmetric inset centers the first card and
-    // reveals slivers of neighboring cards in the padding area.
-    paddingInline: isDesktop ? 0 : 'var(--carousel-mobile-peek)',
-    scrollPaddingInline: isDesktop ? 0 : 'var(--carousel-mobile-peek)',
     ...style,
   }
 

@@ -9,9 +9,13 @@ export interface CarouselRootProps {
   gap?: number
   /** Viewport width (px) at/above which the carousel switches to desktop behavior. */
   breakpoint?: number
-  /** Below `breakpoint`, inline padding on the item group that centers the
-   * first card and reveals slivers of neighboring cards. */
+  /** Below `breakpoint`, how much room is left free on each side of a card so
+   * neighbouring cards peek through. The first and last cards still settle
+   * flush against the container's edges. */
   mobilePeek?: number
+  /** Below `breakpoint`, clicking a non-active card scrolls it into the centre.
+   * Off by default. */
+  centerItemOnClick?: boolean
   children: ReactNode
   className?: string
   style?: CSSProperties
@@ -28,6 +32,7 @@ export function CarouselRoot({
   gap = 16,
   breakpoint = 576,
   mobilePeek = 32,
+  centerItemOnClick = false,
   children,
   className,
   style,
@@ -124,6 +129,7 @@ export function CarouselRoot({
       gap,
       breakpoint,
       isDesktop,
+      centerItemOnClick,
       viewportRef,
       canScrollPrev,
       canScrollNext,
@@ -139,6 +145,7 @@ export function CarouselRoot({
       gap,
       breakpoint,
       isDesktop,
+      centerItemOnClick,
       canScrollPrev,
       canScrollNext,
       pageCount,
