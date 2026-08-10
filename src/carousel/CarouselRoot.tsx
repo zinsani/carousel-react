@@ -3,8 +3,12 @@ import { CarouselContext } from './carousel-context'
 import { useMediaQuery } from './use-media-query'
 
 export interface CarouselRootProps {
-  /** Number of cards visible (and slid per arrow click) on desktop. Mobile always shows 1. */
+  /** Number of cards visible (and slid per page) at/above `breakpoint`. */
   cardsToShow: number
+  /** Number of cards visible (and slid per page) below `breakpoint`. Defaults
+   * to 1, which centres the active card; anything higher aligns pages to the
+   * start edge instead, since a page of several cards has no single centre. */
+  mobileCardsToShow?: number
   /** Gap between cards in px. */
   gap?: number
   /** Viewport width (px) at/above which the carousel switches to desktop behavior. */
@@ -26,6 +30,7 @@ export interface CarouselRootProps {
 
 type CarouselCSSProperties = CSSProperties & {
   '--carousel-cards-to-show'?: number
+  '--carousel-mobile-cards-to-show'?: number
   '--carousel-gap'?: string
   '--carousel-mobile-peek'?: string
   '--carousel-mobile-inset'?: string
@@ -33,6 +38,7 @@ type CarouselCSSProperties = CSSProperties & {
 
 export function CarouselRoot({
   cardsToShow,
+  mobileCardsToShow = 1,
   gap = 16,
   breakpoint = 576,
   mobilePeek = 32,
@@ -48,12 +54,14 @@ export function CarouselRoot({
   const [pageCount, setPageCount] = useState(1)
   const [activePage, setActivePage] = useState(0)
   const isDesktop = useMediaQuery(`(min-width: ${breakpoint}px)`)
+  // A single mobile card is centred; a page of several has no single centre.
+  const centred = !isDesktop && mobileCardsToShow === 1
 
   /**
    * The `scrollLeft` each page snaps to. Pages group `cardsToShow` items on
-   * desktop and one item per page on mobile, mirroring how far an arrow click
-   * or a swipe travels. Offsets are clamped to the max scroll, so an uneven
-   * final page resolves to the same position the browser actually stops at.
+   * desktop and `mobileCardsToShow` below the breakpoint, mirroring how far an
+   * arrow click or a swipe travels. Offsets are clamped to the max scroll, so
+   * an uneven final page resolves to where the browser actually stops.
    */
   const getPageOffsets = useCallback(() => {
     const viewport = viewportRef.current
@@ -63,7 +71,7 @@ export function CarouselRoot({
     )
     if (items.length === 0) return []
 
-    const itemsPerPage = Math.max(1, isDesktop ? cardsToShow : 1)
+    const itemsPerPage = Math.max(1, isDesktop ? cardsToShow : mobileCardsToShow)
     const maxScrollLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth)
     const paddingLeft = parseFloat(getComputedStyle(viewport).paddingLeft) || 0
     const base = items[0].offsetLeft
@@ -71,14 +79,15 @@ export function CarouselRoot({
     const offsets: number[] = []
     for (let i = 0; i < items.length; i += itemsPerPage) {
       const distance = items[i].offsetLeft - base
-      // Desktop snaps items to the start edge; mobile centers them.
-      const ideal = isDesktop
-        ? distance
-        : paddingLeft + distance + items[i].offsetWidth / 2 - viewport.clientWidth / 2
+      // Only the one-card mobile layout centres its page; the rest snap to the
+      // start edge, where the page offset is just the distance travelled.
+      const ideal = centred
+        ? paddingLeft + distance + items[i].offsetWidth / 2 - viewport.clientWidth / 2
+        : distance
       offsets.push(Math.max(0, Math.min(ideal, maxScrollLeft)))
     }
     return offsets
-  }, [cardsToShow, isDesktop])
+  }, [cardsToShow, mobileCardsToShow, isDesktop, centred])
 
   const updateScrollState = useCallback(() => {
     const viewport = viewportRef.current
@@ -134,6 +143,8 @@ export function CarouselRoot({
       gap,
       breakpoint,
       isDesktop,
+      centred,
+      mobileCardsToShow,
       centerItemOnClick,
       viewportRef,
       canScrollPrev,
@@ -150,6 +161,8 @@ export function CarouselRoot({
       gap,
       breakpoint,
       isDesktop,
+      centred,
+      mobileCardsToShow,
       centerItemOnClick,
       canScrollPrev,
       canScrollNext,
@@ -166,6 +179,7 @@ export function CarouselRoot({
     position: 'relative',
     width: '100%',
     '--carousel-cards-to-show': cardsToShow,
+    '--carousel-mobile-cards-to-show': mobileCardsToShow,
     '--carousel-gap': `${gap}px`,
     '--carousel-mobile-peek': `${mobilePeek}px`,
     '--carousel-mobile-inset': `${mobileInset}px`,

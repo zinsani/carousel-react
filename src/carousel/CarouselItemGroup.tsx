@@ -54,8 +54,11 @@ export function CarouselItemGroup({
     gap: 'var(--carousel-gap)',
     // Mobile gutter: cards come to rest inset from the container's edges, but
     // still scroll through this area — padding on a scroll container offsets
-    // the content, it doesn't clip it.
+    // the content, it doesn't clip it. The matching scroll-padding insets the
+    // snapport too; without it a start-aligned page snaps its first card hard
+    // against the edge, cancelling the gutter.
     paddingInline: isDesktop ? 0 : 'var(--carousel-mobile-inset)',
+    scrollPaddingInline: isDesktop ? 0 : 'var(--carousel-mobile-inset)',
     ...style,
   }
 

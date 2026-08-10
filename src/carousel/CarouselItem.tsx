@@ -9,14 +9,14 @@ export interface CarouselItemProps {
 }
 
 export function CarouselItem({ children, className, style, onClick }: CarouselItemProps) {
-  const { isDesktop, centerItemOnClick, activePage, scrollToPage } = useCarouselContext('Item')
+  const { isDesktop, centred, mobileCardsToShow, centerItemOnClick, activePage, scrollToPage } =
+    useCarouselContext('Item')
   const itemRef = useRef<HTMLDivElement>(null)
 
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     onClick?.(event)
     if (event.defaultPrevented) return
-    // Opt-in, and mobile-only: one item per page there, so the item's position
-    // among its siblings is also its page index.
+    // Opt-in, and mobile-only.
     if (!centerItemOnClick || isDesktop) return
 
     const element = itemRef.current
@@ -25,21 +25,33 @@ export function CarouselItem({ children, className, style, onClick }: CarouselIt
 
     const items = Array.from(group.querySelectorAll<HTMLElement>(':scope > [data-carousel-item]'))
     const index = items.indexOf(element)
-    if (index >= 0 && index !== activePage) scrollToPage(index)
+    if (index < 0) return
+
+    // Cards are grouped into pages, so the item's position among its siblings
+    // only equals its page index when there is one card per page.
+    const page = Math.floor(index / Math.max(1, mobileCardsToShow))
+    if (page !== activePage) scrollToPage(page)
+  }
+
+  // Desktop: evenly divide the viewport across `cardsToShow` cards, minus the
+  // gaps between them, so cards fill the container edge-to-edge.
+  // Single-card mobile: leave `mobilePeek` free on *both* sides, since the page
+  // is centred and shows a neighbour either way. Clamping to [0, maxScroll]
+  // then settles the first and last cards against the container's edges.
+  // Multi-card mobile: pages align to the start edge, so only the trailing side
+  // needs room for the next card to peek through.
+  let width =
+    'calc((100% - (var(--carousel-cards-to-show) - 1) * var(--carousel-gap)) / var(--carousel-cards-to-show))'
+  if (!isDesktop) {
+    width = centred
+      ? 'calc(100% - 2 * var(--carousel-mobile-peek))'
+      : 'calc((100% - var(--carousel-mobile-peek) - (var(--carousel-mobile-cards-to-show) - 1) * var(--carousel-gap)) / var(--carousel-mobile-cards-to-show))'
   }
 
   const itemStyle: CSSProperties = {
     flex: '0 0 auto',
-    // Desktop: evenly divide the viewport across `cardsToShow` cards, minus the
-    // gaps between them, so cards fill the container edge-to-edge.
-    // Mobile: leave `mobilePeek` free on both sides so neighbouring cards peek
-    // through. Snapping stays centred, but the browser clamps scrolling to
-    // [0, maxScroll], so the first card settles flush left and the last flush
-    // right while everything between is centred.
-    width: isDesktop
-      ? 'calc((100% - (var(--carousel-cards-to-show) - 1) * var(--carousel-gap)) / var(--carousel-cards-to-show))'
-      : 'calc(100% - 2 * var(--carousel-mobile-peek))',
-    scrollSnapAlign: isDesktop ? 'start' : 'center',
+    width,
+    scrollSnapAlign: centred ? 'center' : 'start',
     ...style,
   }
 

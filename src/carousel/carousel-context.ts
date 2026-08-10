@@ -6,6 +6,10 @@ export interface CarouselContextValue {
   /** Viewport width (px) at/above which the carousel switches to desktop behavior. */
   breakpoint: number
   isDesktop: boolean
+  /** Cards per page below `breakpoint`. */
+  mobileCardsToShow: number
+  /** True only for the single-card mobile layout, the one that centres its page. */
+  centred: boolean
   /** Below `breakpoint`, clicking a non-active item scrolls it into the centre. */
   centerItemOnClick: boolean
   viewportRef: RefObject<HTMLDivElement | null>

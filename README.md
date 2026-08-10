@@ -38,7 +38,9 @@ function Example() {
 ## Behavior
 
 - **Desktop** (≥ `breakpoint`, default 576px): shows `cardsToShow` cards edge-to-edge, auto-sized to fill the container. Arrow buttons slide by exactly one container-width (i.e. `cardsToShow` cards) per click, and native scroll clamping means the last click on an uneven card count slides only as far as needed to land the final card flush against the edge — no special-casing required.
-- **Mobile** (below `breakpoint`): shows 1 card at a time with `mobilePeek` of room on each side, so neighbouring cards peek through. The first card comes to rest against the container's left edge and the last against its right edge, with `mobileInset` kept as a gutter so they aren't jammed against it; every card in between is centred. Cards still scroll through that gutter — it offsets where they settle, it doesn't clip them. Swipe left/right to slide — native touch scrolling, no gesture library. Arrow buttons render nothing at all (not just visually hidden) below the breakpoint. Set `centerItemOnClick` to also scroll a tapped, non-active card into the centre.
+- **Mobile** (below `breakpoint`): shows `mobileCardsToShow` cards per page (default 1) with `mobilePeek` of room for the next card to peek through, and `mobileInset` kept as a gutter so the first and last cards rest inset rather than jammed against the container's edges. Cards still scroll through that gutter — it offsets where they settle, it doesn't clip them. Swipe left/right to slide — native touch scrolling, no gesture library. Arrow buttons render nothing at all (not just visually hidden) below the breakpoint. Set `centerItemOnClick` to also scroll a tapped, non-active card into view.
+
+  With the default `mobileCardsToShow={1}` the active card is **centred**, so a sliver of both neighbours shows and the first/last cards settle against the gutter. Any higher value aligns pages to the **start** edge instead — a page of several cards has no single card to centre — so only the next card peeks, on the trailing side.
 
 ## Styling
 
@@ -54,7 +56,7 @@ The library ships zero visual or positioning opinion — no colors, no shadows, 
 
 | Component | Props |
 |---|---|
-| `Carousel.Root` | `cardsToShow` (number, required) · `gap` (px, default `16`) · `breakpoint` (px, default `576`) · `mobilePeek` (px, default `32`) · `mobileInset` (px, default `16` — mobile only) · `centerItemOnClick` (boolean, default `false` — mobile only) · `className` · `style` |
+| `Carousel.Root` | `cardsToShow` (number, required) · `mobileCardsToShow` (number, default `1`) · `gap` (px, default `16`) · `breakpoint` (px, default `576`) · `mobilePeek` (px, default `32`) · `mobileInset` (px, default `16` — mobile only) · `centerItemOnClick` (boolean, default `false` — mobile only) · `className` · `style` |
 | `Carousel.ItemGroup` | `aria-label` · `className` · `style` |
 | `Carousel.Item` | `className` · `style` |
 | `Carousel.Control` | Wrapper for the arrow buttons; renders `null` below `breakpoint`. `className` · `style` |
